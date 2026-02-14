@@ -11,8 +11,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import rehypeRaw from "rehype-raw";
-import cat from "./md/cat.md?raw";
+import remarkGfm from "remark-gfm";
+import cat_content from "./md/cat.md?raw";
+import webgl_content from "./md/webgl.md?raw";
 
 const Portfolio = () => {
   const [view, setView] = useState("home");
@@ -48,15 +52,16 @@ const Portfolio = () => {
       name: "How I rendered 1 million points on browser using GPU",
       category: "Technical",
       date: "Feb 14, 2026",
-      content:
-        "## Deployment Protocol\n\nStandard operating procedures for rolling updates and rollback strategies.",
+      content: webgl_content,
+      link: "https://github.com/Seek4samurai/render-1-million-pts#how-i-rendered-1-million-points",
     },
     {
       id: "doc_02",
       name: "Running Nyan cat game using Moralis & MetaMask",
       category: "Technical",
       date: "Jan 10, 2026",
-      content: cat,
+      content: cat_content,
+      link: "https://github.com/Seek4samurai/project-giga-cat#nyan-cat-game",
     },
   ];
 
@@ -271,34 +276,44 @@ const Portfolio = () => {
               <p className="text-[12px] text-[#8a8a81] mt-3 font-semibold uppercase tracking-widest">
                 {activeDoc.date}
               </p>
+              <a
+                className="flex flex-row items-center mt-1 bg-black text-white p-1 w-fit cursor-pointer hover:bg-white hover:text-black"
+                href={activeDoc.link}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View Project
+                <ExternalLink size={14} className="ml-1"></ExternalLink>
+              </a>
             </header>
-            <div className="text-[16px] leading-relaxed text-white whitespace-pre-wrap">
+            <div className="prose prose-invert max-w-none">
               <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeRaw]}
                 components={{
-                  // This ensures your headers and lists match the CS 1.6 theme
-                  h1: ({ node, ...props }) => (
-                    <h1
-                      className="text-2xl font-bold text-white mt-4 mb-2"
-                      {...props}
-                    />
-                  ),
-                  h2: ({ node, ...props }) => (
-                    <h2
-                      className="text-xl font-bold text-white mt-4 mb-2"
-                      {...props}
-                    />
-                  ),
-                  p: ({ node, ...props }) => <p className="mb-4" {...props} />,
-                  ul: ({ node, ...props }) => (
-                    <ul className="list-disc ml-6 mb-4" {...props} />
-                  ),
-                  code: ({ node, ...props }) => (
-                    <code
-                      className="bg-black/30 px-1 rounded text-white"
-                      {...props}
-                    />
-                  ),
+                  code({ node, inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || "");
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        style={vscDarkPlus}
+                        language={match[1]}
+                        PreTag="div"
+                        customStyle={{
+                          margin: "1.5rem 0",
+                          borderRadius: "4px",
+                          border: "1px solid #5a5a54",
+                          backgroundColor: "#1a1a18",
+                        }}
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, "")}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
                 }}
               >
                 {activeDoc.content}

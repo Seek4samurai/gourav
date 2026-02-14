@@ -217,7 +217,7 @@ Fetching score as an Object. Then in our separate `Marq.jsx` component we are us
 
 <div style="background-color: black;">
 
-```js
+```
 <span>
   {score[0]?.name
     ? score[0]?.name
@@ -240,7 +240,7 @@ _Hope everything was clear, and if not consider checking the video. If still stu
 
 **You'll need Metamask account to pass Authentication** 📝
 
-![Demo-Image](https://raw.githubusercontent.com/Seek4samurai/project-giga-cat/main/public/demo/login.png)
+![Demo-Image](https://raw.githubusercontent.com/Seek4samurai/project-giga-cat/refs/heads/main/web/public/demo/login.png)
 
 Follow these steps to run on your device after `Cloning the repository` and `cd project-giga-cat` to enter the root project folder.
 
